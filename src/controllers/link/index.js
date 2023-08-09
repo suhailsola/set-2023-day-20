@@ -3,13 +3,13 @@ import Link from "../../database/model/Link";
 import { generateRandomString } from "../../utils/helper";
 
 export function createLink(req, res) {
-  const link = req.body;
+  const { link } = req.body;
   const owner = req.user;
   const slug = generateRandomString(10);
-  console.log(owner);
+  console.log(link);
   Link.create({ slug, link, owner })
     .then(function (data) {
-      console.log(data);
+      // console.log(data);
       res
         .status(200)
         .json({ message: "A link is created", data: data.dataValues });
@@ -61,29 +61,28 @@ export function redirect(req, res) {
   })
     .then(function (data) {
       if (data?.dataValues) {
-        console.log(data.dataValues);
+        const linkData = data.dataValues;
+        console.log(linkData);
+
         Link.update(
-          { visit_counter: data.dataValues.visit_counter + 1 },
-          {
-            where: { slug },
-          }
+          { visit_counter: linkData.visit_counter + 1 },
+          { where: { slug } }
         )
-          .then(function (data) {
-            console.log("Does it come here");
-            res.redirect(data.dataValues.link);
-            return;
+          .then(function () {
+            const targetUrl = linkData.link;
+            console.log("Redirecting to:", targetUrl);
+            res.redirect(targetUrl); // Perform the redirect
           })
           .catch(function (errorUpdate) {
             res
               .status(500)
-              .json({ message: "An error occured", data: errorUpdate });
+              .json({ message: "An error occurred", data: errorUpdate });
           });
-        res.status(200).json({ data: data.dataValues.link });
       } else {
         res.status(400).json({ message: "Not found" });
       }
     })
     .catch(function (error) {
-      res.status(500).json({ error });
+      res.status(500).json({ message: "An error occurred", data: error });
     });
 }

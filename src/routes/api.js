@@ -6,7 +6,6 @@ import {
   updateLink,
 } from "../controllers/link";
 import { isAuthenticated } from "../middleware/isAuthenticated";
-import { body } from "express-validator";
 import {
   loginValidator,
   registerValidator,
@@ -18,7 +17,7 @@ const apiRoutes = Router();
 
 apiRoutes.post("/register", registerValidator, validate, register);
 apiRoutes.post("/login", loginValidator, validate, login);
-apiRoutes.get("/logout", logout);
+apiRoutes.get("/logout", isAuthenticated, logout);
 
 apiRoutes.post(
   "/link",
@@ -27,7 +26,13 @@ apiRoutes.post(
   isAuthenticated,
   createLink
 );
-apiRoutes.put("/link/:slug", isAuthenticated, updateLink);
+apiRoutes.put(
+  "/link/:slug",
+  createLinkValidator,
+  validate,
+  isAuthenticated,
+  updateLink
+);
 apiRoutes.get("/link/:userId", isAuthenticated, listAllLinkByUserId);
 
 export default apiRoutes;
