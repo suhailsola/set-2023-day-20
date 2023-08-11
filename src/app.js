@@ -35,7 +35,9 @@ app.use(
 );
 
 // initialise database
-dbInit();
+if (config.nodeEnv !== "test") {
+  dbInit();
+}
 // Apply routes before error handling
 app.use("/", root);
 app.use("/api", apiRoutes);

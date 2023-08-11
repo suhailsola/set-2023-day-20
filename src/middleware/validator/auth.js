@@ -8,6 +8,10 @@ export const loginValidator = [
   body("identifier")
     .exists()
     .withMessage("is required")
+    .bail()
+    .notEmpty()
+    .withMessage("Cannot be empty")
+    .bail()
     .custom(async function (identifier) {
       console.log(identifier);
       const user = await User.findOne({
@@ -25,7 +29,7 @@ export const registerValidator = [
   body("username")
     .exists()
     .isLength({ min: 4 })
-    .withMessage("must be at least 4 characters")
+    .withMessage("Must be at least 4 characters")
     .custom(async (value) => {
       const user = await User.findOne({
         attributes: ["username"],
@@ -41,7 +45,7 @@ export const registerValidator = [
   body("email")
     .exists()
     .isEmail()
-    .withMessage("please put a valid email")
+    .withMessage("Please put a valid email").bail()
     .custom(async (value) => {
       const user = await User.findOne({
         attributes: ["email"],

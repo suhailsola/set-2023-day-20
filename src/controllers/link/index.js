@@ -1,4 +1,3 @@
-import { Op } from "sequelize";
 import Link from "../../database/model/Link";
 import { generateRandomString } from "../../utils/helper";
 
@@ -85,4 +84,40 @@ export function redirect(req, res) {
     .catch(function (error) {
       res.status(500).json({ message: "An error occurred", data: error });
     });
+}
+
+export async function deleteLink(req, res) {
+  const slug = req.params.slug;
+  try {
+    await Link.destroy({
+      where: {
+        slug: slug,
+      },
+    });
+    res.status(200).json({ message: "Link soft deleted", slug });
+  } catch (error) {
+    res.status(403).json({ message: "Link does not exist", error });
+  }
+}
+
+export async function updateUsername(req, res) {
+  const userId = req.user;
+  const username = req.params.username;
+  const getBody = req.body;
+  try {
+    await User.findOne({
+      where: { id: userId, username },
+    });
+    await User.update(
+      { username: getBody.username },
+      {
+        where: { id: userId, username },
+      }
+    );
+    res
+      .status(200)
+      .json({ message: "Username updated", newUsername: getBody.username });
+  } catch (error) {
+    res.status(403).json({ error });
+  }
 }
