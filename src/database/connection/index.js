@@ -8,6 +8,8 @@ export const PostgresConnection = new Sequelize(database, user, password, {
   dialect: "postgres",
   logging: config.nodeEnv === "development",
   dialectOptions: {
+    // false for localhost
+    // ssl: false
     ssl:
       config.nodeEnv === "production"
         ? {

@@ -8,7 +8,6 @@ export function createLink(req, res) {
   console.log(link);
   Link.create({ slug, link, owner })
     .then(function (data) {
-      // console.log(data);
       res
         .status(200)
         .json({ message: "A link is created", data: data.dataValues });

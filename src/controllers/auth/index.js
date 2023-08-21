@@ -1,6 +1,8 @@
 import { Op } from "sequelize";
 import User from "../../database/model/User";
 import bcrypt, { hash } from "bcryptjs";
+import jwt from "jsonwebtoken";
+import config from "../../config";
 
 // encrypt password
 function encryptedPassword(password) {
@@ -27,10 +29,15 @@ export function register(req, res) {
     });
 }
 
+const generatAccessToken = (userData) => {
+  // console.log(config);
+  return jwt.sign(userData, config.jwtSecretToken, { expiresIn: "1800s" });
+};
+
 export async function login(req, res) {
   const { identifier, password } = req.body;
-  console.log(identifier);
-  const [user] = await User.findOne({
+  // console.log(identifier);
+  const user = await User.findOne({
     where: {
       [Op.or]: [{ username: identifier }, { email: identifier }],
     },
@@ -38,11 +45,14 @@ export async function login(req, res) {
   // const hashPassword = encryptedPassword(password);
   bcrypt.compare(password, user.password, (error, bcryptRes) => {
     if (bcryptRes) {
-      req.session.auth = user.id;
+      req["token"] = user.id;
+      const token = generatAccessToken({
+        id: user.id,
+      });
       const serverRes = {
         message: "Login Succesful",
         data: user,
-        session: req.session,
+        jwt: token,
       };
       res.status(200).json(serverRes);
     } else {
@@ -57,6 +67,6 @@ export async function login(req, res) {
 }
 
 export function logout(req, res) {
-  const session = req.session.destroy();
+  // const session = req.session.destroy();
   res.status(200).json({ message: "Logout successfully" });
 }

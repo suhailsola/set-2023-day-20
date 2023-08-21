@@ -8,7 +8,6 @@ import fourOhFour from "./middleware/fourOhFour";
 import root from "./routes/root";
 import dbInit from "./database/init";
 import apiRoutes from "./routes/api";
-import session from "express-session";
 
 const app = express();
 
@@ -23,16 +22,6 @@ app.use(
 app.use(helmet());
 app.use(morgan("tiny"));
 
-// apply session
-const oneDay = 1000 * 60 * 60 * 24;
-app.use(
-  session({
-    secret: config.sessionSecretToken,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: oneDay },
-  })
-);
 
 // initialise database
 if (config.nodeEnv !== "test") {
