@@ -1,7 +1,6 @@
 import { Op } from "sequelize";
 import User from "../../database/model/User";
 import bcrypt, { hash } from "bcryptjs";
-import { validationResult } from "express-validator";
 
 // encrypt password
 function encryptedPassword(password) {
@@ -31,7 +30,7 @@ export function register(req, res) {
 export async function login(req, res) {
   const { identifier, password } = req.body;
   console.log(identifier);
-  const user = await User.findOne({
+  const [user] = await User.findOne({
     where: {
       [Op.or]: [{ username: identifier }, { email: identifier }],
     },

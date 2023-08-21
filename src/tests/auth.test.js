@@ -144,6 +144,7 @@ describe("Authentication", function () {
 
   test("Logging out", async function () {
     // await authSession.post("/api/login").send({ identifier, password });
+    console.log(authSession);
 
     const result = await authSession.get("/api/logout");
     expect(result.status).toBe(200);
