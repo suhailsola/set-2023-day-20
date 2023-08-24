@@ -36,7 +36,7 @@ apiRoutes.put(
   isAuthenticated,
   updateLink
 );
-apiRoutes.get("/link/:userId", isAuthenticated, listAllLinkByUserId);
+apiRoutes.get("/link", isAuthenticated, listAllLinkByUserId);
 apiRoutes.delete("/link/:slug", isAuthenticated, deleteLink);
 
 apiRoutes.get("/protected", isAuthenticated, (req, res) => {

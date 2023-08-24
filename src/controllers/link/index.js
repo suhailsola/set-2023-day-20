@@ -35,12 +35,13 @@ export async function updateLink(req, res) {
 }
 
 export function listAllLinkByUserId(req, res) {
-  const userId = req.params.userId;
+  const userId = req.user;
   Link.findAndCountAll({
     // order: [["created_at", "DESC"]],
-    attributes: ["slug", "link", "visit_counter"],
+    attributes: ["slug", "link", "visit_counter", "created_at"],
     where: {
       owner: userId,
+      deleted_at: null,
     },
   })
     .then(function (data) {
